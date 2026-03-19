@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="margin-bottom:20px;">Pedidos realizados</h1>
+
+<!-- MENSAJE DE COMPRA EXITOSA -->
+{% if success_id %}
+<div style="
+    background:#16a34a;
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:20px;
+    font-weight:bold;
+">
+    ✅ Compra realizada con éxito.  
+    ID del pedido: {{ success_id }}
+</div>
+{% endif %}
+
+<!-- MENSAJE DE ELIMINACIÓN -->
+{% if request.query_params.get("deleted") %}
+<div style="
+    background:#dc2626;
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:20px;
+    font-weight:bold;
+">
+    ❌ Pedido eliminado correctamente.
+</div>
+{% endif %}
+
+<!-- FILTROS -->
+<div style="background:#1e293b; padding:20px; border-radius:10px; margin-bottom:25px;">
+    <h3 style="margin-top:0;">Filtrar pedidos</h3>
+
+    <form method="get" action="/pedidos" style="display:flex; gap:10px; flex-wrap:wrap;">
+        <input type="number" name="pedido_id" placeholder="Buscar por ID" min="0"
+               style="padding:8px; border-radius:6px; border:none;">
+
+        <input type="text" name="cliente" placeholder="Buscar por Cliente"
+               style="padding:8px; border-radius:6px; border:none;">
+
+        <button class="btn-primary">Buscar</button>
+
+        <a href="/pedidos">
+            <button type="button" class="btn-warning">Limpiar</button>
+        </a>
+    </form>
+</div>
+
+<!-- TABLA -->
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for p in pedidos %}
+    <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.cliente }}</td>
+        <td>$ {{ p.total }}</td>
+        <td>{{ p.estado }}</td>
+        <td>
+
+            <!-- VER DETALLE -->
+            <a href="/pedidos/{{ p.id }}">
+                <button class="btn-primary">Ver</button>
+            </a>
+
+            <!-- ELIMINAR -->
+            <form action="/eliminar/{{ p.id }}" method="post"
+                  style="display:inline;"
+                  onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
+                <button type="submit" class="btn-danger">Eliminar</button>
+            </form>
+
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% if not pedidos %}
+<div style="
+    margin-top:20px;
+    padding:20px;
+    background:#1e293b;
+    border-radius:10px;
+    text-align:center;
+    font-weight:bold;
+">
+    No hay pedidos registrados.
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Detalle Pedido #{{ pedido.id }}</h1>
+
+<p><strong>Cliente:</strong> {{ pedido.cliente }}</p>
+<p><strong>Total:</strong> $ {{ pedido.total }}</p>
+<p><strong>Estado:</strong> {{ pedido.estado }}</p>
+
+<h2>Productos adquiridos</h2>
+
+<table>
+<tr>
+    <th>Producto</th>
+    <th>Precio</th>
+    <th>Cantidad</th>
+    <th>Subtotal</th>
+</tr>
+
+{% for item in pedido.items %}
+<tr>
+    <td>{{ item.nombre }}</td>
+    <td>$ {{ item.precio }}</td>
+    <td>{{ item.cantidad }}</td>
+    <td>$ {{ item.precio * item.cantidad }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h2>Actualizar Estado</h2>
+<form action="/actualizar_estado/{{ pedido.id }}" method="post">
+    <select name="estado" required>
+        <option value="">SELECCIONE</option>
+        <option value="CREADO">CREADO</option>
+        <option value="ENVIADO">ENVIADO</option>
+        <option value="ENTREGADO">ENTREGADO</option>
+    </select>
+    <button class="btn-warning">Actualizar</button>
+</form>
+
+{% endblock %}

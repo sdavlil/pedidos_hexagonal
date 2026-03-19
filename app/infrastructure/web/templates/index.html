@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apple Enterprise Orders</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            font-family: Arial;
+            color: white;
+            margin: 0;
+        }
+
+        header {
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            background-color: #111827;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            width: 95%;
+            margin: 30px auto;
+        }
+
+        .catalogo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .producto {
+            background-color: #1e293b;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: 0.3s;
+        }
+
+        .producto:hover {
+            transform: scale(1.05);
+        }
+
+        .producto img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            border: none;
+            background-color: #2563eb;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 40px;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #2563eb;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+<header>Apple Enterprise Order System</header>
+
+<div class="container">
+
+<h2>Crear Pedido</h2>
+
+<form action="/crear" method="post">
+    <input type="text" name="cliente" placeholder="Cliente" required>
+
+    <div class="catalogo">
+        {% for p in catalogo %}
+        <div class="producto">
+            <img src="{{ p.imagen }}">
+            <h3>{{ p.nombre }}</h3>
+            <p>$ {{ p.precio }}</p>
+            <input type="hidden" name="producto_ids" value="{{ p.id }}">
+            <input type="number" name="cantidades" min="0" value="0">
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Crear Pedido</button>
+</form>
+
+<h2>Pedidos</h2>
+
+<table>
+<tr>
+    <th>ID</th>
+    <th>Cliente</th>
+    <th>Total</th>
+    <th>Estado</th>
+</tr>
+{% for p in pedidos %}
+<tr>
+    <td>{{ p.id }}</td>
+    <td>{{ p.cliente }}</td>
+    <td>$ {{ p.total }}</td>
+    <td>{{ p.estado }}</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apple Enterprise</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background-color: #0f172a;
+            color: white;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #111827;
+            height: 100vh;
+            padding-top: 30px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #2563eb;
+        }
+
+        .content {
+            margin-left: 220px;
+            padding: 40px;
+            width: 100%;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-primary { background-color: #2563eb; color: white; }
+        .btn-warning { background-color: #f59e0b; color: white; }
+        .btn-danger { background-color: #dc2626; color: white; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #2563eb;
+            padding: 10px;
+        }
+
+        td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Apple Corp</h2>
+    <a href="/">Comprar</a>
+    <a href="/pedidos">Ver pedidos</a>
+</div>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
