@@ -3,14 +3,28 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from typing import Optional
 
-from app.infrastructure.adapters.sqlite_pedido_repository import SQLitePedidoRepository
-from app.application.pedido_service import GestionadorPedidos
+# Importar tus casos de uso (use cases) en vez de service directo
+from app.application.pedido_usecases import (
+    CrearPedidoUseCase,
+    ObtenerCatalogoUseCase,
+    ObtenerPedidosUseCase,
+    ObtenerDetallePedidoUseCase,
+    ActualizarEstadoUseCase,
+    EliminarPedidoUseCase
+)
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/infrastructure/web/templates")
 
-repo = SQLitePedidoRepository()
-service = GestionadorPedidos(repo)
+# =========================
+# Instancias de casos de uso
+# =========================
+crear_pedido_uc = CrearPedidoUseCase()
+obtener_catalogo_uc = ObtenerCatalogoUseCase()
+obtener_pedidos_uc = ObtenerPedidosUseCase()
+detalle_pedido_uc = ObtenerDetallePedidoUseCase()
+actualizar_estado_uc = ActualizarEstadoUseCase()
+eliminar_pedido_uc = EliminarPedidoUseCase()
 
 
 # =========================
@@ -19,9 +33,9 @@ service = GestionadorPedidos(repo)
 @router.get("/")
 def catalogo(request: Request):
 
-    # catalogo = service.obtener_catalogo()
-
-    catalogo = []  # 🔹 Mock temporal sin lógica de negocio
+    # Antes: catalogo = service.obtener_catalogo()
+    # Ahora usando use case
+    catalogo = obtener_catalogo_uc.ejecutar()
 
     return templates.TemplateResponse(
         "catalogo.html",
@@ -42,8 +56,8 @@ def crear(
     cantidades: list[str] = Form(default=[])
 ):
 
-    # catalogo = service.obtener_catalogo()
-    catalogo = []
+    # Antes: catalogo = service.obtener_catalogo()
+    catalogo = obtener_catalogo_uc.ejecutar()
 
     items = []
 
@@ -73,11 +87,10 @@ def crear(
     if not items:
         return RedirectResponse("/", status_code=303)
 
-    # pedido = service.crear_pedido(cliente=cliente, items=items)
+    # Antes: pedido = service.crear_pedido(cliente=cliente, items=items)
+    pedido = crear_pedido_uc.ejecutar(cliente=cliente, items=items)
 
-    pedido = None  # 🔹 Mock
-
-    if pedido and pedido.id:
+    if pedido and getattr(pedido, "id", None):
         return RedirectResponse(f"/pedidos?success_id={pedido.id}", status_code=303)
 
     return RedirectResponse("/pedidos", status_code=303)
@@ -94,8 +107,7 @@ def ver_pedidos(
     success_id: Optional[int] = None
 ):
 
-    # pedidos = service.obtener_todos()
-    pedidos = []  # 🔹 Mock
+    pedidos = obtener_pedidos_uc.ejecutar()
 
     if cliente and cliente.strip() != "":
         pedidos = [
@@ -126,8 +138,7 @@ def ver_pedidos(
 @router.get("/pedidos/{pedido_id}")
 def detalle_pedido(request: Request, pedido_id: int):
 
-    # pedido = service.obtener_pedido(pedido_id)
-    pedido = None  # 🔹 Mock
+    pedido = detalle_pedido_uc.ejecutar(pedido_id)
 
     if not pedido:
         return RedirectResponse("/pedidos", status_code=303)
@@ -150,7 +161,7 @@ def actualizar_estado(pedido_id: int, estado: str = Form(...)):
     if estado.strip() == "":
         return RedirectResponse(f"/pedidos/{pedido_id}", status_code=303)
 
-    # service.actualizar_estado(pedido_id, estado)
+    actualizar_estado_uc.ejecutar(pedido_id, estado)
 
     return RedirectResponse(f"/pedidos/{pedido_id}", status_code=303)
 
@@ -161,6 +172,6 @@ def actualizar_estado(pedido_id: int, estado: str = Form(...)):
 @router.post("/eliminar/{pedido_id}")
 def eliminar_pedido(pedido_id: int):
 
-    # service.eliminar_pedido(pedido_id)
+    eliminar_pedido_uc.ejecutar(pedido_id)
 
     return RedirectResponse("/pedidos?deleted=1", status_code=303)
