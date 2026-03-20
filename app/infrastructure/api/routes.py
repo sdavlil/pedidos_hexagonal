@@ -1,13 +1,11 @@
 from fastapi import APIRouter
-from app.infrastructure.adapters.sqlite_pedido_repository import SQLitePedidoRepository
+from app.dependencies import get_pedido_service
 from app.application.pedido_service import GestionadorPedidos
 
 router = APIRouter()
-repo = SQLitePedidoRepository()
-service = GestionadorPedidos(repo)
 
 @router.post("/pedidos")
-def crear_pedido(data: dict):
+def crear_pedido(data: dict, service: GestionadorPedidos = Depends(get_pedido_service)):
     pedido = service.crear_pedido(
         id=data["id"],
         cliente=data["cliente"],

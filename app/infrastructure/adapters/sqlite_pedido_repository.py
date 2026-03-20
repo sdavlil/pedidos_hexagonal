@@ -5,6 +5,7 @@ from app.infrastructure.repositories.database import SessionLocal
 from app.infrastructure.repositories.models import PedidoModel
 
 
+
 class SQLitePedidoRepository(PedidoRepositoryPort):
 
     # =========================

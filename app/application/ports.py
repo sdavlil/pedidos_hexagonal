@@ -19,3 +19,5 @@ class PedidoRepositoryPort(ABC):
     @abstractmethod
     def eliminar(self, pedido_id: int):
         pass
+
+
