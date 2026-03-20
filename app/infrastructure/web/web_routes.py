@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from typing import Optional
 
-from app.application.pedido_usecases import (
+from app.domain.use_cases import (
     CrearPedidoUseCase,
     ObtenerCatalogoUseCase,
     ObtenerPedidosUseCase,

@@ -1,12 +1,10 @@
 from fastapi import APIRouter, Depends
 from typing import List
 from app.infrastructure.adapters.sqlite_pedido_repository import SQLitePedidoRepository
-from app.application.pedido_usecases import (
-    CrearPedidoUseCase,
-    ListarPedidosUseCase,
-    ActualizarEstadoUseCase,
-    EliminarPedidoUseCase
-)
+from app.domain.use_cases.crear_pedido import CrearPedidoUseCase
+from app.domain.use_cases.listar_pedidos import ListarPedidosUseCase
+from app.domain.use_cases.actualizar_estado import ActualizarEstadoUseCase
+from app.domain.use_cases.eliminar_pedido import EliminarPedidoUseCase
 from app.domain.pedido import Pedido
 
 router = APIRouter()
