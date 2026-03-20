@@ -1,4 +1,5 @@
 from pydantic import BaseModel, field_validator
+from app.domain.exceptions.Excepciones_Dominio import PedidoVacioError
 from typing import List
 
 class Producto(BaseModel):
@@ -9,7 +10,7 @@ class Producto(BaseModel):
     @field_validator("cantidad")
     def cantidad_mayor_a_cero(cls, v):
         if v <= 0:
-            raise ValueError("La cantidad debe ser mayor a 0")
+            raise PedidoVacioError("La cantidad debe ser mayor a 0")
         return v
 
 
