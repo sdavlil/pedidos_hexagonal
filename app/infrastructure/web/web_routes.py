@@ -18,7 +18,11 @@ service = GestionadorPedidos(repo)
 # =========================
 @router.get("/")
 def catalogo(request: Request):
-    catalogo = service.obtener_catalogo()
+
+    # catalogo = service.obtener_catalogo()
+
+    catalogo = []  # 🔹 Mock temporal sin lógica de negocio
+
     return templates.TemplateResponse(
         "catalogo.html",
         {
@@ -37,10 +41,12 @@ def crear(
     producto_ids: list[str] = Form(default=[]),
     cantidades: list[str] = Form(default=[])
 ):
-    catalogo = service.obtener_catalogo()
+
+    # catalogo = service.obtener_catalogo()
+    catalogo = []
+
     items = []
 
-    # Seguridad extra: si no llegan listas, convertir
     if not isinstance(producto_ids, list):
         producto_ids = [producto_ids]
 
@@ -49,7 +55,6 @@ def crear(
 
     for pid, cantidad in zip(producto_ids, cantidades):
 
-        # Evitar valores vacíos o inválidos
         if not cantidad or not cantidad.isdigit():
             continue
 
@@ -68,7 +73,9 @@ def crear(
     if not items:
         return RedirectResponse("/", status_code=303)
 
-    pedido = service.crear_pedido(cliente=cliente, items=items)
+    # pedido = service.crear_pedido(cliente=cliente, items=items)
+
+    pedido = None  # 🔹 Mock
 
     if pedido and pedido.id:
         return RedirectResponse(f"/pedidos?success_id={pedido.id}", status_code=303)
@@ -79,8 +86,6 @@ def crear(
 # =========================
 # VER PEDIDOS + FILTROS
 # =========================
-from typing import Optional
-
 @router.get("/pedidos")
 def ver_pedidos(
     request: Request,
@@ -88,16 +93,16 @@ def ver_pedidos(
     pedido_id: Optional[str] = None,
     success_id: Optional[int] = None
 ):
-    pedidos = service.obtener_todos()
 
-    # Filtrar por cliente si tiene valor
+    # pedidos = service.obtener_todos()
+    pedidos = []  # 🔹 Mock
+
     if cliente and cliente.strip() != "":
         pedidos = [
             p for p in pedidos
             if cliente.lower() in p.cliente.lower()
         ]
 
-    # Filtrar por ID solo si es número válido
     if pedido_id and pedido_id.strip().isdigit():
         pedido_id_int = int(pedido_id)
         pedidos = [
@@ -120,7 +125,9 @@ def ver_pedidos(
 # =========================
 @router.get("/pedidos/{pedido_id}")
 def detalle_pedido(request: Request, pedido_id: int):
-    pedido = service.obtener_pedido(pedido_id)
+
+    # pedido = service.obtener_pedido(pedido_id)
+    pedido = None  # 🔹 Mock
 
     if not pedido:
         return RedirectResponse("/pedidos", status_code=303)
@@ -140,11 +147,10 @@ def detalle_pedido(request: Request, pedido_id: int):
 @router.post("/actualizar_estado/{pedido_id}")
 def actualizar_estado(pedido_id: int, estado: str = Form(...)):
 
-    # No actualizar si selecciona opción vacía
     if estado.strip() == "":
         return RedirectResponse(f"/pedidos/{pedido_id}", status_code=303)
 
-    service.actualizar_estado(pedido_id, estado)
+    # service.actualizar_estado(pedido_id, estado)
 
     return RedirectResponse(f"/pedidos/{pedido_id}", status_code=303)
 
@@ -154,5 +160,7 @@ def actualizar_estado(pedido_id: int, estado: str = Form(...)):
 # =========================
 @router.post("/eliminar/{pedido_id}")
 def eliminar_pedido(pedido_id: int):
-    service.eliminar_pedido(pedido_id)
+
+    # service.eliminar_pedido(pedido_id)
+
     return RedirectResponse("/pedidos?deleted=1", status_code=303)
