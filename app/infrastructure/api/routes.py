@@ -7,6 +7,7 @@ from app.domain.use_cases.actualizar_estado import ActualizarEstadoUseCase
 from app.domain.use_cases.eliminar_pedido import EliminarPedidoUseCase
 from app.domain.pedido import Pedido
 
+
 router = APIRouter()
 
 # =========================
@@ -42,7 +43,7 @@ def crear_pedido(data: dict):
 # LISTAR PEDIDOS
 # =========================
 @router.get("/pedidos")
-def listar_pedidos():
+def listar():
     pedidos: List[Pedido] = listar_pedidos_uc.ejecutar()
     return [p.__dict__ for p in pedidos]
 
