@@ -6,6 +6,8 @@ from app.domain.use_cases.listar_pedidos import ListarPedidosUseCase
 from app.domain.use_cases.actualizar_estado import ActualizarEstadoUseCase
 from app.domain.use_cases.eliminar_pedido import EliminarPedidoUseCase
 from app.domain.pedido import Pedido
+from fastapi.responses import RedirectResponse
+import uuid
 
 
 router = APIRouter()
@@ -24,6 +26,41 @@ eliminar_pedido_uc = EliminarPedidoUseCase(repo)
 # =========================
 # CREAR PEDIDO
 # =========================
+from fastapi import Form
+from fastapi.responses import RedirectResponse
+import uuid
+
+@router.post("/crear")
+def crear_pedido_form(
+    cliente: str = Form(...),
+    productos: List[str] = Form(...),
+    precios: List[float] = Form(...),
+    cantidades: List[int] = Form(...)
+):
+    items = []
+    total = 0
+
+    for i in range(len(productos)):
+        if cantidades[i] > 0:
+            subtotal = precios[i] * cantidades[i]
+            total += subtotal
+
+            items.append({
+                "nombre": productos[i],
+                "precio": precios[i],
+                "cantidad": cantidades[i]
+            })
+
+    pedido = Pedido(
+        id=str(uuid.uuid4()),
+        cliente=cliente,
+        items=items,
+        total=total
+    )
+
+    crear_pedido_uc.ejecutar(pedido)
+
+    return RedirectResponse(url="/pedidos?success=1", status_code=303)
 @router.post("/pedidos")
 def crear_pedido(data: dict):
     pedido = Pedido(

@@ -104,7 +104,8 @@
             <img src="{{ p.imagen }}">
             <h3>{{ p.nombre }}</h3>
             <p>$ {{ p.precio }}</p>
-            <input type="hidden" name="producto_ids" value="{{ p.id }}">
+            <input type="hidden" name="productos" value="{{ p.nombre }}">
+            <input type="hidden" name="precios" value="{{ p.precio }}">
             <input type="number" name="cantidades" min="0" value="0">
         </div>
         {% endfor %}
