@@ -1,4 +1,7 @@
 from fastapi import APIRouter, Depends
+from fastapi import Request
+from fastapi import Query
+from fastapi.templating import Jinja2Templates
 from typing import List
 from app.infrastructure.adapters.sqlite_pedido_repository import SQLitePedidoRepository
 from app.domain.use_cases.crear_pedido import CrearPedidoUseCase
@@ -8,6 +11,9 @@ from app.domain.use_cases.eliminar_pedido import EliminarPedidoUseCase
 from app.domain.pedido import Pedido
 from fastapi.responses import RedirectResponse
 import uuid
+
+
+templates = Jinja2Templates(directory="app/infrastructure/web/templates")
 
 
 router = APIRouter()
@@ -80,24 +86,41 @@ def crear_pedido(data: dict):
 # LISTAR PEDIDOS
 # =========================
 @router.get("/pedidos")
-def listar():
-    pedidos: List[Pedido] = listar_pedidos_uc.ejecutar()
-    return [p.__dict__ for p in pedidos]
+def listar(
+    request: Request,
+    pedido_id: str = Query(None),
+    cliente: str = Query(None)
+):
+    print("ID:", pedido_id)
+    print("CLIENTE:", cliente)
 
+    pedidos: List[Pedido] = listar_pedidos_uc.ejecutar()
+
+    if pedido_id:
+        pedidos = [p for p in pedidos if str(p.id) == str(pedido_id)]
+
+    if cliente:
+        pedidos = [p for p in pedidos if cliente.lower() in p.cliente.lower()]
+
+    return templates.TemplateResponse("pedidos.html", {
+        "request": request,
+        "pedidos": pedidos,
+        "success_id": request.query_params.get("success")
+    })
 
 # =========================
 # ACTUALIZAR ESTADO
 # =========================
-@router.put("/pedidos/{pedido_id}")
-def actualizar_estado(pedido_id: int, data: dict):
-    pedido = actualizar_estado_uc.ejecutar(pedido_id, data["estado"])
-    return {"mensaje": "Pedido actualizado", "pedido": pedido.__dict__}
+@router.post("/actualizar_estado/{pedido_id}")
+def actualizar_estado(pedido_id: int, estado: str = Form(...)):
+    pedido = actualizar_estado_uc.ejecutar(pedido_id, estado)
+    return RedirectResponse(url=f"/pedidos/{pedido_id}", status_code=303)
 
 
 # =========================
 # ELIMINAR PEDIDO
 # =========================
-@router.delete("/pedidos/{pedido_id}")
+@router.post("/eliminar/{pedido_id}")
 def eliminar_pedido(pedido_id: int):
     eliminar_pedido_uc.ejecutar(pedido_id)
-    return {"mensaje": "Pedido eliminado"}
+    return RedirectResponse(url="/pedidos?deleted=1", status_code=303)

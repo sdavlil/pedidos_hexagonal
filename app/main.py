@@ -8,10 +8,10 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Rutas WEB (HTML)
+# ✅ WEB (HTML)
 app.include_router(web_router)
 
-# Rutas API (JSON)
-app.include_router(api_router, prefix="/api")
+# ✅ API (POST, PUT, DELETE)
+app.include_router(api_router)
 
 app.mount("/static", StaticFiles(directory="app/infrastructure/web/static"), name="static")

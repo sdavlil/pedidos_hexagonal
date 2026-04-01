@@ -102,4 +102,19 @@ class SQLitePedidoRepository(PedidoRepositoryPort):
             db.commit()
 
         db.close()
+    def actualizar_estado(self, pedido_id: int, estado: str):
+        db = SessionLocal()
 
+        pedido = db.query(PedidoModel).filter(PedidoModel.id == pedido_id).first()
+
+        if not pedido:
+            db.close()
+            raise ValueError("Pedido no encontrado")
+
+        pedido.estado = estado
+
+        db.commit()
+        db.refresh(pedido)
+        db.close()
+
+        return pedido

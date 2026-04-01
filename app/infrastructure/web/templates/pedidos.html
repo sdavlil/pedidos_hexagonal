@@ -35,17 +35,19 @@
     <h3 style="margin-top:0;">Filtrar pedidos</h3>
 
     <form method="get" action="/pedidos" style="display:flex; gap:10px; flex-wrap:wrap;">
-        <input type="number" name="pedido_id" placeholder="Buscar por ID" min="0"
-               style="padding:8px; border-radius:6px; border:none;">
+        
+        <input type="text" name="pedido_id" placeholder="Buscar por ID"
+            value="{{ request.query_params.get('pedido_id', '') }}"
+            style="padding:8px; border-radius:6px; border:none;">
 
         <input type="text" name="cliente" placeholder="Buscar por Cliente"
-               style="padding:8px; border-radius:6px; border:none;">
+            value="{{ request.query_params.get('cliente', '') }}"
+            style="padding:8px; border-radius:6px; border:none;">
 
-        <button class="btn-primary">Buscar</button>
+        <button type="submit" class="btn-primary">Buscar</button>
 
-        <a href="/pedidos">
-            <button type="button" class="btn-warning">Limpiar</button>
-        </a>
+        <a href="/pedidos" class="btn-warning">Limpiar</a>
+
     </form>
 </div>
 

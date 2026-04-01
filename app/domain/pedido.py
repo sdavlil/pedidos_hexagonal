@@ -9,8 +9,10 @@ class Pedido:
     def validar(self):
         if not self.cliente:
             raise ValueError("El cliente es obligatorio")
+
         if not self.items:
             raise ValueError("Debe haber al menos un producto")
+
         if self.total <= 0:
             raise ValueError("El total debe ser mayor a 0")
 
